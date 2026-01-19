@@ -1,0 +1,23 @@
+name: world
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pytorch=2.5
+  - pytorch-cuda=12.4
+  - torchvision
+  - pip
+  - pip:
+    - ato
+    - loguru
+    - einops
+    - gymnasium
+    - pillow
+    - tqdm
+    - h5py
+    - imageio[ffmpeg]
+    - wandb
+    - huggingface_hub
