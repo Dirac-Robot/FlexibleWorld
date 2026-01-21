@@ -560,14 +560,13 @@ def collect_ppo_rollouts(
     model.eval()
 
     observation = env.reset()
+    state_before = get_state_from_env(env)
 
     goal_types = list(GOAL_GENERATORS.keys())
     goal_type = np.random.choice(goal_types)
-    goal_dsl = GOAL_GENERATORS[goal_type](SimState.random())
+    goal_dsl = GOAL_GENERATORS[goal_type](state_before)  # Use actual env state
     commands = NATURAL_COMMANDS.get(goal_type, ['do something'])
     goal_text = np.random.choice(commands)
-
-    state_before = get_state_from_env(env)
 
     total_reward = 0
     success_count = 0
@@ -628,11 +627,11 @@ def collect_ppo_rollouts(
 
         if done:
             observation = env.reset()
+            state_before = get_state_from_env(env)
             goal_type = np.random.choice(goal_types)
-            goal_dsl = GOAL_GENERATORS[goal_type](SimState.random())
+            goal_dsl = GOAL_GENERATORS[goal_type](state_before)  # Use actual env state
             commands = NATURAL_COMMANDS.get(goal_type, ['do something'])
             goal_text = np.random.choice(commands)
-            state_before = get_state_from_env(env)
             step_in_episode = 0
             episode_count += 1
 
