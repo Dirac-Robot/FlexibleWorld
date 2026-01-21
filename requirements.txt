@@ -1,0 +1,40 @@
+# FlexibleWorld Dependencies
+# Install: pip install -r requirements.txt
+
+# Core ML (PyTorch nightly for B200 GPU support)
+# Install separately: pip install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
+numpy>=2.0
+einops>=0.8
+
+# HuggingFace ecosystem
+transformers>=4.45
+huggingface_hub>=0.21
+peft>=0.12
+accelerate>=1.0
+safetensors>=0.4
+
+# Simulation
+taichi>=1.7
+gymnasium>=1.0
+
+# LLM API
+openai>=1.0
+
+# Utilities
+loguru>=0.7
+tqdm>=4.60
+h5py>=3.10
+imageio[ffmpeg]>=2.30
+pillow>=10.0
+wandb>=0.15
+
+# Web interface
+gradio>=4.0
+
+# Config management
+ato>=2.0
+
+# Optional: for development
+# pytest
+# black
+# ruff
