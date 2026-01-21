@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional, Union, List
 from loguru import logger
 
+from config import scope
 from models import WorldModel
 from models.world_model import create_world_model
 from utils import save_video
@@ -179,19 +180,19 @@ def interactive_rollout(
     agent.save_history(output_path)
 
 
-if __name__ == '__main__':
-    import argparse
-
-    parser = argparse.ArgumentParser(description='Interactive world model rollout')
-    parser.add_argument('model_path', help='Checkpoint path or HuggingFace repo ID')
-    parser.add_argument('--output', '-o', default='rollout.gif', help='Output video path')
-    parser.add_argument('--steps', '-n', type=int, default=50, help='Number of steps')
-    parser.add_argument('--hub', action='store_true', help='Load from HuggingFace Hub')
-    args = parser.parse_args()
+@scope
+def inference(config):
+    """Run inference with ato config."""
+    if config.inference.model_path is None:
+        raise ValueError('Must set inference.model_path via CLI')
 
     interactive_rollout(
-        args.model_path,
-        args.output,
-        args.steps,
-        args.hub,
+        model_path=config.inference.model_path,
+        output_path=config.inference.output_path,
+        num_steps=config.inference.num_steps,
+        from_hub=config.inference.from_hub,
     )
+
+
+if __name__ == '__main__':
+    inference()

@@ -14,13 +14,6 @@ from utils import save_checkpoint, load_pretrained
 from utils.hub import load_from_hub, create_from_pretrained
 
 
-@scope.observe(priority=2, chain_with='finetune')
-def finetune_from_hub(config):
-    """Load pretrained from HuggingFace Hub for finetuning."""
-    config.finetune.from_hub = True
-    config.finetune.hub_repo = None  # must be set via CLI
-
-
 @scope
 def finetune(config):
     """Finetuning with pretrained weights."""

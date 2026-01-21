@@ -1,0 +1,33 @@
+You are controlling a 2D particle simulation. 
+
+CURRENT STATE:
+- Number of particles: {n_particles}
+- Particle positions are shown in the image (if provided)
+
+GOAL: {goal}
+
+AVAILABLE ACTIONS:
+1. ADD_PARTICLE: Add a new particle
+   - params: x, y (position), value (charge), radius
+2. APPLY_HEAT: Add heat at a location  
+   - params: x, y (center), value (amount), radius
+3. APPLY_FORCE: Push particles away from a point
+   - params: x, y (center), value (strength), radius
+4. APPLY_ATTRACTION: Pull particles toward a point
+   - params: x, y (center), value (strength), radius
+5. APPLY_REPULSION: Push particles away from a point
+   - params: x, y (center), value (strength), radius
+
+OUTPUT FORMAT (JSON):
+{{
+    "reasoning": "Brief explanation of your choice",
+    "action": {{
+        "type": "APPLY_FORCE",
+        "x": 32,
+        "y": 32,
+        "value": 2.0,
+        "radius": 20
+    }}
+}}
+
+Respond with only the JSON, no additional text.

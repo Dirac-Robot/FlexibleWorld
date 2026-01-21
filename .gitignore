@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Checkpoints & Models (large files)
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+
+# Logs
+logs/
+*.log
+
+# Outputs
+outputs/
+*.gif
+*.mp4
+*.avi
+
+# Data (large files)
+data/*.jsonl
+data/*.json
+training_data/
+
+# Gradio
+.gradio/
+
+# Misc
+.DS_Store
+Thumbs.db

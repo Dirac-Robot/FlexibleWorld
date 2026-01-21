@@ -262,37 +262,37 @@ def create_flexible_world_model(config) -> FlexibleWorldModel:
     llm_backbone = None
 
     # Create vision encoder based on config
-    encoder_type = config.model.get('encoder_type', 'placeholder')
+    encoder_type = config.model.vision.get('type', 'placeholder')
     if encoder_type == 'clip':
         vision_encoder = create_clip_encoder(
-            model_name=config.model.get('encoder_name', 'openai/clip-vit-base-patch32'),
-            layer_names=list(config.model.get('encoder_layer_names', [])),
-            freeze=config.model.get('freeze_encoder', True),
+            model_name=config.model.vision.get('name', 'openai/clip-vit-base-patch32'),
+            layer_names=list(config.model.vision.get('layer_names', [])),
+            freeze=config.model.vision.get('freeze', True),
         )
     elif encoder_type == 'dinov2':
         vision_encoder = create_dinov2_encoder(
-            model_name=config.model.get('encoder_name', 'dinov2_vitb14'),
-            layer_names=list(config.model.get('encoder_layer_names', [])),
-            freeze=config.model.get('freeze_encoder', True),
+            model_name=config.model.vision.get('name', 'dinov2_vitb14'),
+            layer_names=list(config.model.vision.get('layer_names', [])),
+            freeze=config.model.vision.get('freeze', True),
         )
 
     # Create LLM backbone based on config
-    llm_type = config.model.get('llm_type', 'placeholder')
+    llm_type = config.model.llm.get('type', 'placeholder')
     if llm_type in ['llama', 'mistral', 'hf']:
         llm_backbone = create_llm_backbone(
-            model_name=config.model.get('llm_name', 'meta-llama/Llama-2-7b-hf'),
-            layer_names=list(config.model.get('llm_layer_names', [])),
-            freeze=config.model.get('freeze_llm', True),
-            load_in_8bit=config.model.get('load_in_8bit', False),
+            model_name=config.model.llm.get('name', 'meta-llama/Llama-2-7b-hf'),
+            layer_names=list(config.model.llm.get('layer_names', [])),
+            freeze=config.model.llm.get('freeze', True),
+            load_in_8bit=config.model.llm.get('load_in_8bit', False),
         )
 
     return FlexibleWorldModel(
         vision_encoder=vision_encoder,
         llm_backbone=llm_backbone,
         action_dim=config.model.action_dim,
-        vision_dim=config.model.get('vision_dim', 768),
-        llm_dim=config.model.get('llm_dim', 768),
-        output_dim=config.model.get('output_dim', 768),
+        vision_dim=config.model.vision.get('dim', 768),
+        llm_dim=config.model.llm.get('dim', 768),
+        output_dim=config.model.decoder.get('output_dim', 768),
         image_size=config.model.image_size,
         channels=config.model.channels,
     )
