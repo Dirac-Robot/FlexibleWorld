@@ -14,6 +14,7 @@ from simulator.meta_action import (
     ChainMacro,
     create_registry,
 )
+from simulator.dsl import MetaDSL, DSLCommand, create_dsl
 
 __all__ = [
     'ParticleSimulator',
@@ -35,5 +36,9 @@ __all__ = [
     'MembraneMacro',
     'ChainMacro',
     'create_registry',
+    # DSL
+    'MetaDSL',
+    'DSLCommand',
+    'create_dsl',
 ]
 
