@@ -732,6 +732,12 @@ def train_behavior_cloning(
         weight_decay=config.train.weight_decay,
     )
 
+    # Cosine annealing scheduler
+    total_steps = config.vlm.bc_epochs*len(dataloader)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=total_steps, eta_min=config.train.lr*0.01
+    )
+
     device = dist_info['device']
 
     for epoch in range(config.vlm.bc_epochs):
@@ -757,10 +763,12 @@ def train_behavior_cloning(
             losses['total'].backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
+            scheduler.step()
 
             total_loss += losses['total'].item()
+            current_lr = scheduler.get_last_lr()[0]
             if is_main_process(dist_info):
-                progress_bar.set_postfix({'loss': f"{losses['total'].item():.4f}"})
+                progress_bar.set_postfix({'loss': f"{losses['total'].item():.4f}", 'lr': f"{current_lr:.2e}"})
 
         average_loss = total_loss/len(dataloader)
         if is_main_process(dist_info):
@@ -791,6 +799,11 @@ def train_ppo(
         weight_decay=config.train.weight_decay,
     )
 
+    # Cosine annealing scheduler for PPO
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=config.vlm.ppo_epochs, eta_min=config.train.lr*0.001
+    )
+
     buffer = RolloutBuffer()
     best_success_rate = 0
 
@@ -804,13 +817,16 @@ def train_ppo(
         rollout_info = reduce_dict(rollout_info, dist_info)
 
         losses = train_ppo_epoch(model, buffer, optimizer, config, device)
+        scheduler.step()
 
+        current_lr = scheduler.get_last_lr()[0]
         if is_main_process(dist_info):
             logger.info(
                 f"PPO Epoch {epoch+1}/{config.vlm.ppo_epochs}: "
                 f"reward={rollout_info['mean_reward']:.3f}, "
                 f"success={rollout_info['success_rate']:.1%}, "
-                f"policy_loss={losses['policy']:.4f}"
+                f"policy_loss={losses['policy']:.4f}, "
+                f"lr={current_lr:.2e}"
             )
 
             if rollout_info['success_rate'] > best_success_rate:
