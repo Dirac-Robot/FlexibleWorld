@@ -554,6 +554,8 @@ def collect_ppo_rollouts(
     buffer: RolloutBuffer,
     num_steps: int,
     device: str,
+    show_progress: bool = True,
+    dist_info: dict = None,
 ) -> Dict[str, float]:
     model.eval()
 
@@ -572,7 +574,10 @@ def collect_ppo_rollouts(
     episode_count = 0
     step_in_episode = 0
 
-    for step in range(num_steps):
+    is_main = dist_info is None or dist_info.get('is_main', True)
+    pbar = tqdm(range(num_steps), desc='Rollout', disable=not (show_progress and is_main))
+
+    for step in pbar:
         image = render_env_to_image(env)
 
         with torch.no_grad():
@@ -611,6 +616,12 @@ def collect_ppo_rollouts(
         total_reward += reward
         if success:
             success_count += 1
+
+        pbar.set_postfix({
+            'ep': episode_count,
+            'reward': f'{total_reward/(step+1):.3f}',
+            'goal': goal_type[:8],
+        })
 
         observation = next_observation
         state_before = state_after
@@ -786,7 +797,10 @@ def train_ppo(
 
     for epoch in range(config.vlm.ppo_epochs):
         buffer.reset()
-        rollout_info = collect_ppo_rollouts(base_model, env, buffer, config.vlm.rollout_steps, device)
+        rollout_info = collect_ppo_rollouts(
+            base_model, env, buffer, config.vlm.rollout_steps, device,
+            show_progress=True, dist_info=dist_info,
+        )
 
         rollout_info = reduce_dict(rollout_info, dist_info)
 
